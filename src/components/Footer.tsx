@@ -7,7 +7,7 @@ const Footer = () => (
         <div>
           <div className="flex items-center gap-2 font-sans font-bold text-xl mb-4">
             <Stethoscope className="w-6 h-6" />
-            MediBook
+            Care Connect Pro
           </div>
           <p className="font-body text-sm opacity-70 leading-relaxed">Your trusted platform for seamless doctor appointments and modern healthcare management.</p>
         </div>
@@ -32,9 +32,9 @@ const Footer = () => (
         <div>
           <h4 className="font-sans font-bold mb-4">Contact</h4>
           <ul className="space-y-3 font-body text-sm opacity-70">
-            <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> support@medibook.com</li>
-            <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +1 (555) 123-4567</li>
-            <li className="flex items-center gap-2"><MapPin className="w-4 h-4" /> 123 Health Street, NY</li>
+            <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> [careconnectpro@gmal.com]</li>
+            <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +91 - 9640059577</li>
+            <li className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Skandagiri Temple , Secunderabad , Telangana</li>
           </ul>
         </div>
       </div>

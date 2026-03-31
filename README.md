@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Care Connect Pro
 
 TODO: Document your project here

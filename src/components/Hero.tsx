@@ -50,7 +50,7 @@ const Hero = () => (
           </div>
           <div className="absolute -bottom-4 -left-4 bg-card rounded-2xl shadow-xl border border-border p-4 hidden md:block">
             <p className="font-body text-xs text-muted-foreground">Next Appointment</p>
-            <p className="font-sans font-bold text-foreground text-sm mt-1">Dr. Sarah Mitchell</p>
+            <p className="font-sans font-bold text-foreground text-sm mt-1">Dr. Priya </p>
             <p className="font-body text-xs text-primary mt-0.5">Today, 2:30 PM</p>
           </div>
         </motion.div>

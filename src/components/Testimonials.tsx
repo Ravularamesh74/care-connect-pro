@@ -3,7 +3,7 @@ import { Star, Quote } from "lucide-react";
 
 const reviews = [
   { name: "Anita Sharma", text: "Booking was so easy! I got an appointment within minutes and the reminders helped me not miss it.", rating: 5 },
-  { name: "Robert Williams", text: "The telehealth feature is amazing. I consulted with my doctor from home. Truly next-gen healthcare!", rating: 5 },
+  { name: "Sandeep Kumar", text: "The telehealth feature is amazing. I consulted with my doctor from home. Truly next-gen healthcare!", rating: 5 },
   { name: "Priya Menon", text: "Managing my family's appointments in one place is a lifesaver. The interface is clean and intuitive.", rating: 5 },
 ];
 
