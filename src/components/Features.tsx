@@ -1,44 +1,149 @@
+"use client";
+
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, Bell, CalendarCheck, ShieldCheck, Users, Smartphone } from "lucide-react";
+import {
+  Clock,
+  Bell,
+  CalendarCheck,
+  ShieldCheck,
+  Users,
+  Smartphone,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 const features = [
-  { icon: Clock, title: "24/7 Online Booking", desc: "Patients book appointments anytime from any device — no phone calls needed." },
-  { icon: Bell, title: "Smart Reminders", desc: "Automated SMS, email & WhatsApp reminders reduce no-shows by up to 70%." },
-  { icon: CalendarCheck, title: "Real-Time Scheduling", desc: "Live calendar sync ensures no double-bookings across departments." },
-  { icon: ShieldCheck, title: "Secure Health Records", desc: "HIPAA-compliant data storage keeps patient information safe and encrypted." },
-  { icon: Users, title: "Multi-Doctor Support", desc: "Manage schedules for entire hospitals with department-wise doctor panels." },
-  { icon: Smartphone, title: "Telehealth Ready", desc: "Built-in video consultation support for remote patient care." },
+  {
+    icon: Clock,
+    title: "24/7 Online Booking",
+    desc: "Patients book anytime without calls.",
+    full: "Patients can book appointments 24/7 from web or mobile with real-time availability and instant confirmation.",
+    stat: "24/7",
+  },
+  {
+    icon: Bell,
+    title: "Smart Reminders",
+    desc: "Reduce no-shows drastically.",
+    full: "Automated reminders via SMS, email, and WhatsApp reduce no-shows by up to 70%.",
+    stat: "70%",
+  },
+  {
+    icon: CalendarCheck,
+    title: "Real-Time Scheduling",
+    desc: "No double bookings.",
+    full: "Live calendar sync ensures accurate appointment scheduling across departments.",
+    stat: "Live Sync",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Secure Records",
+    desc: "Encrypted patient data.",
+    full: "All patient data is encrypted and stored securely with compliance standards.",
+    stat: "100% Secure",
+  },
+  {
+    icon: Users,
+    title: "Multi-Doctor Support",
+    desc: "Manage hospital teams.",
+    full: "Manage multiple doctors, departments, and schedules from a single dashboard.",
+    stat: "Unlimited",
+  },
+  {
+    icon: Smartphone,
+    title: "Telehealth Ready",
+    desc: "Online consultations.",
+    full: "Integrated video consultations allow remote care for patients anywhere.",
+    stat: "Remote Care",
+  },
 ];
 
-const Features = () => (
-  <section id="features" className="py-24" style={{ background: "var(--section-gradient)" }}>
-    <div className="container mx-auto px-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-        <span className="text-sm font-body font-semibold text-primary tracking-widest uppercase">Why Choose Us</span>
-        <h2 className="font-sans text-3xl md:text-4xl font-bold text-foreground mt-3">Advanced Features for Modern Healthcare</h2>
-        <p className="font-body text-muted-foreground mt-4 max-w-2xl mx-auto">Everything you need to digitize patient scheduling, reduce admin burden, and deliver a world-class experience.</p>
-      </motion.div>
+export default function Features() {
+  const [active, setActive] = useState<any>(null);
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {features.map((f, i) => (
-          <motion.div
-            key={f.title}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-card rounded-2xl p-7 border border-border hover:shadow-lg hover:border-primary/30 transition-all group"
-          >
-            <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <f.icon className="w-6 h-6 text-secondary-foreground group-hover:text-primary-foreground transition-colors" />
-            </div>
-            <h3 className="font-sans text-lg font-bold text-foreground mb-2">{f.title}</h3>
-            <p className="font-body text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-          </motion.div>
-        ))}
+  return (
+    <section className="py-24 bg-gradient-to-b from-background to-muted/30">
+      <div className="container mx-auto px-4">
+
+        {/* HEADER */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <span className="text-sm uppercase text-primary font-semibold tracking-widest">
+            Why Choose Us
+          </span>
+          <h2 className="text-4xl font-bold mt-3">
+            Advanced Healthcare Features
+          </h2>
+          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+            Powerful tools to digitize hospitals and improve patient experience.
+          </p>
+        </motion.div>
+
+        {/* GRID */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.title}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              onClick={() => setActive(f)}
+              className="cursor-pointer bg-card border rounded-2xl p-6 hover:shadow-xl transition group"
+            >
+              {/* ICON */}
+              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition">
+                <f.icon className="w-6 h-6" />
+              </div>
+
+              {/* TITLE */}
+              <h3 className="font-bold text-lg">{f.title}</h3>
+
+              {/* DESC */}
+              <p className="text-sm text-muted-foreground mt-2">
+                {f.desc}
+              </p>
+
+              {/* STAT */}
+              <div className="mt-4 text-primary font-bold text-xl">
+                {f.stat}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-16">
+          <Button size="lg">
+            Get Started Now
+          </Button>
+        </div>
+
+        {/* MODAL */}
+        {active && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-white rounded-xl p-6 max-w-md w-full"
+            >
+              <active.icon className="w-8 h-8 mb-4 text-primary" />
+              <h3 className="text-xl font-bold">{active.title}</h3>
+              <p className="mt-3 text-muted-foreground">{active.full}</p>
+
+              <Button
+                className="mt-6 w-full"
+                onClick={() => setActive(null)}
+              >
+                Close
+              </Button>
+            </motion.div>
+          </div>
+        )}
       </div>
-    </div>
-  </section>
-);
-
-export default Features;
+    </section>
+  );
+}

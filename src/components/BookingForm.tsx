@@ -1,97 +1,206 @@
+"use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { CalendarDays } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarDays } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+
+// ✅ Validation Schema
+const bookingSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().min(10, "Enter valid phone number"),
+  department: z.string().min(1, "Select department"),
+  date: z.string().min(1, "Select date"),
+  time: z.string().min(1, "Select time"),
+  notes: z.string().optional(),
+});
+
+type BookingFormData = z.infer<typeof bookingSchema>;
 
 const BookingForm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<BookingFormData>({
+    resolver: zodResolver(bookingSchema),
+  });
+
+  // ✅ Real API Submission (replace with your backend)
+  const onSubmit = async (data: BookingFormData) => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/book-appointment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("Failed to submit");
+
+      toast({
+        title: "✅ Appointment Booked",
+        description: "We will contact you shortly.",
+      });
+
+      reset();
+    } catch (error) {
+      toast({
+        title: "❌ Error",
+        description: "Something went wrong. Try again.",
+      });
+    } finally {
       setLoading(false);
-      toast({ title: "Appointment Requested!", description: "We'll confirm your booking shortly via email." });
-    }, 1500);
+    }
   };
 
   return (
     <section id="book" className="py-24 bg-card">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <span className="text-sm font-body font-semibold text-primary tracking-widest uppercase">Get Started</span>
-            <h2 className="font-sans text-3xl md:text-4xl font-bold text-foreground mt-3">Book Your Appointment</h2>
-            <p className="font-body text-muted-foreground mt-4">Fill out the form and we'll get back to you within minutes.</p>
-          </motion.div>
+      <div className="container mx-auto px-4 max-w-4xl">
+        
+        {/* HEADER */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <span className="text-sm font-semibold text-primary uppercase tracking-widest">
+            Get Started
+          </span>
+          <h2 className="text-4xl font-bold mt-3">
+            Book Your Appointment
+          </h2>
+          <p className="text-muted-foreground mt-4">
+            Fill out the form and get instant confirmation.
+          </p>
+        </motion.div>
 
-          <motion.form
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            onSubmit={handleSubmit}
-            className="bg-background rounded-2xl border border-border p-8 md:p-10 shadow-sm"
-          >
-            <div className="grid md:grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <label className="text-sm font-body font-medium text-foreground">Full Name</label>
-                <Input placeholder="John Doe" required />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-body font-medium text-foreground">Email</label>
-                <Input type="email" placeholder="john@email.com" required />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-body font-medium text-foreground">Phone</label>
-                <Input type="tel" placeholder="+1 (555) 000-0000" required />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-body font-medium text-foreground">Department</label>
-                <Select required>
-                  <SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger>
+        {/* FORM */}
+        <motion.form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-background border rounded-2xl p-8 shadow-lg space-y-6"
+        >
+          <div className="grid md:grid-cols-2 gap-5">
+
+            {/* NAME */}
+            <div>
+              <Input placeholder="Full Name" {...register("name")} />
+              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            </div>
+
+            {/* EMAIL */}
+            <div>
+              <Input type="email" placeholder="Email" {...register("email")} />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            </div>
+
+            {/* PHONE */}
+            <div>
+              <Input type="tel" placeholder="Phone" {...register("phone")} />
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+            </div>
+
+            {/* DEPARTMENT */}
+            <Controller
+              control={control}
+              name="department"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="cardiology">Cardiology</SelectItem>
                     <SelectItem value="orthopedics">Orthopedics</SelectItem>
                     <SelectItem value="dermatology">Dermatology</SelectItem>
                     <SelectItem value="neurology">Neurology</SelectItem>
                     <SelectItem value="general">General Medicine</SelectItem>
+                    <SelectItem value="ENT">ENT</SelectItem>
+                    <SelectItem value="ophthalmology">Ophthalmology</SelectItem>
+                    <SelectItem value="gynecology">Gynecology</SelectItem>
+                    <SelectItem value="pediatrics">Pediatrics</SelectItem>
+                    <SelectItem value="neurology">Neurology</SelectItem>
+                    <SelectItem value="general">General Medicine</SelectItem>
+                    <SelectItem value="ENT">ENT</SelectItem>
+                    <SelectItem value="ophthalmology">Ophthalmology</SelectItem>
+                    <SelectItem value="gynecology">Gynecology</SelectItem>
+                    <SelectItem value="pediatrics">Pediatrics</SelectItem>
+                    
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-body font-medium text-foreground">Preferred Date</label>
-                <Input type="date" required />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-body font-medium text-foreground">Preferred Time</label>
-                <Select required>
-                  <SelectTrigger><SelectValue placeholder="Select time" /></SelectTrigger>
+              )}
+            />
+            {errors.department && (
+              <p className="text-red-500 text-sm">{errors.department.message}</p>
+            )}
+
+            {/* DATE */}
+            <div>
+              <Input type="date" {...register("date")} />
+              {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
+            </div>
+
+            {/* TIME */}
+            <Controller
+              control={control}
+              name="time"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select time" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="09:00">09:00 AM</SelectItem>
                     <SelectItem value="10:00">10:00 AM</SelectItem>
                     <SelectItem value="11:00">11:00 AM</SelectItem>
                     <SelectItem value="14:00">02:00 PM</SelectItem>
-                    <SelectItem value="15:00">03:00 PM</SelectItem>
-                    <SelectItem value="16:00">04:00 PM</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-            <div className="space-y-2 mt-5">
-              <label className="text-sm font-body font-medium text-foreground">Symptoms / Notes</label>
-              <Textarea placeholder="Briefly describe your symptoms or reason for visit..." rows={3} />
-            </div>
-            <Button type="submit" size="lg" className="w-full mt-6 gap-2" disabled={loading}>
-              <CalendarDays className="w-5 h-5" />
-              {loading ? "Submitting..." : "Request Appointment"}
-            </Button>
-          </motion.form>
-        </div>
+              )}
+            />
+            {errors.time && (
+              <p className="text-red-500 text-sm">{errors.time.message}</p>
+            )}
+          </div>
+
+          {/* NOTES */}
+          <Textarea placeholder="Describe symptoms..." {...register("notes")} />
+
+          {/* BUTTON */}
+          <Button
+            type="submit"
+            className="w-full flex gap-2"
+            disabled={loading}
+          >
+            <CalendarDays className="w-5 h-5" />
+            {loading ? "Booking..." : "Request Appointment"}
+          </Button>
+        </motion.form>
       </div>
     </section>
   );
