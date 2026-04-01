@@ -1,7 +1,7 @@
 "use client";
 
-import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
-import { forwardRef } from "react";
+import { NavLink as RouterNavLink, NavLinkProps, NavLinkRenderProps } from "react-router-dom";
+import React, { forwardRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type Variant = "default" | "navbar" | "sidebar" | "mobile";
@@ -13,7 +13,7 @@ interface NavLinkPropsExtended
   pendingClassName?: string;
 
   variant?: Variant;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   badge?: string | number;
 }
 
@@ -59,32 +59,40 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkPropsExtended>(
       <RouterNavLink
         ref={ref}
         to={to}
-        className={({ isActive, isPending }) =>
+        className={(renderProps) =>
           cn(
             baseStyles,
             variantStyles[variant],
             className,
 
-            isActive &&
+            renderProps.isActive &&
               (activeClassName || activeStyles[variant]),
 
-            isPending &&
+            renderProps.isPending &&
               (pendingClassName || pendingStyles)
           )
         }
         {...props}
       >
-        {/* ICON */}
-        {icon && <span className="w-4 h-4">{icon}</span>}
+        {(renderProps) => (
+          <>
+            {/* ICON */}
+            {icon && <span className="w-4 h-4">{icon}</span>}
 
-        {/* TEXT */}
-        <span>{children}</span>
+            {/* TEXT */}
+            <span>
+              {typeof children === "function"
+                ? children(renderProps)
+                : children}
+            </span>
 
-        {/* BADGE */}
-        {badge && (
-          <span className="ml-auto text-xs bg-primary text-white px-2 py-0.5 rounded-full">
-            {badge}
-          </span>
+            {/* BADGE */}
+            {badge && (
+              <span className="ml-auto text-xs bg-primary text-white px-2 py-0.5 rounded-full">
+                {badge}
+              </span>
+            )}
+          </>
         )}
       </RouterNavLink>
     );
