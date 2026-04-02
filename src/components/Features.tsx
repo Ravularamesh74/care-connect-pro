@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const features = [
   {
@@ -20,6 +21,7 @@ const features = [
     desc: "Patients book anytime without calls.",
     full: "Patients can book appointments 24/7 from web or mobile with real-time availability and instant confirmation.",
     stat: "24/7",
+    href: "#book"
   },
   {
     icon: Bell,
@@ -41,6 +43,7 @@ const features = [
     desc: "Encrypted patient data.",
     full: "All patient data is encrypted and stored securely with compliance standards.",
     stat: "100% Secure",
+    href: "/health-records"
   },
   {
     icon: Users,
@@ -55,6 +58,7 @@ const features = [
     desc: "Online consultations.",
     full: "Integrated video consultations allow remote care for patients anywhere.",
     stat: "Remote Care",
+    href: "/online-consultation"
   },
 ];
 
@@ -62,7 +66,7 @@ export default function Features() {
   const [active, setActive] = useState<any>(null);
 
   return (
-    <section className="py-24 bg-gradient-to-b from-background to-muted/30">
+    <section id="features" className="py-24 bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4">
 
         {/* HEADER */}
@@ -117,29 +121,51 @@ export default function Features() {
 
         {/* CTA */}
         <div className="text-center mt-16">
-          <Button size="lg">
+          <Button size="lg" onClick={() => {
+            document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' });
+          }}>
             Get Started Now
           </Button>
         </div>
 
         {/* MODAL */}
         {active && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-xl p-6 max-w-md w-full"
+              className="bg-card border rounded-2xl p-8 max-w-md w-full shadow-2xl"
             >
-              <active.icon className="w-8 h-8 mb-4 text-primary" />
-              <h3 className="text-xl font-bold">{active.title}</h3>
-              <p className="mt-3 text-muted-foreground">{active.full}</p>
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                <active.icon className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold mb-2">{active.title}</h3>
+              <p className="text-muted-foreground leading-relaxed mb-8">{active.full}</p>
 
-              <Button
-                className="mt-6 w-full"
-                onClick={() => setActive(null)}
-              >
-                Close
-              </Button>
+              <div className="flex flex-col gap-3">
+                {active.href && (
+                  <Button asChild className="w-full">
+                    {active.href.startsWith('#') ? (
+                      <button onClick={() => {
+                        const id = active.href.replace('#', '');
+                        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                        setActive(null);
+                      }}>
+                        Explore Feature
+                      </button>
+                    ) : (
+                      <Link to={active.href} onClick={() => setActive(null)}>View Service</Link>
+                    )}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setActive(null)}
+                >
+                  Close
+                </Button>
+              </div>
             </motion.div>
           </div>
         )}

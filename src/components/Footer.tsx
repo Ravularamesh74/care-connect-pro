@@ -25,6 +25,7 @@ const Linkedin = (props: any) => (
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const quickLinks = [
   { name: "Features", href: "#features" },
@@ -34,10 +35,10 @@ const quickLinks = [
 ];
 
 const services = [
-  "Online Consultation",
-  "Lab Results",
-  "Prescription Refills",
-  "Health Records",
+  { name: "Online Consultation", href: "/online-consultation" },
+  { name: "Lab Results", href: "/lab-results" },
+  { name: "Prescription Refills", href: "/prescription-refills" },
+  { name: "Health Records", href: "/health-records" },
 ];
 
 const socialLinks = [
@@ -126,8 +127,8 @@ export default function Footer() {
             <h4 className="font-bold mb-4">Services</h4>
             <ul className="space-y-2 text-sm opacity-70">
               {services.map((s) => (
-                <li key={s} className="hover:text-primary transition">
-                  {s}
+                <li key={s.name} className="hover:text-primary transition">
+                  <Link to={s.href}>{s.name}</Link>
                 </li>
               ))}
             </ul>
@@ -176,8 +177,8 @@ export default function Footer() {
         <div className="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center text-xs opacity-60">
           <p>© 2026 Care Connect Pro. All rights reserved.</p>
           <div className="flex gap-4 mt-2 md:mt-0">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms</a>
+            <Link to="/privacy-policy" className="hover:text-primary transition">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-primary transition">Terms</Link>
           </div>
         </div>
       </div>

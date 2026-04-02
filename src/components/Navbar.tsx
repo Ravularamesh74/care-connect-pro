@@ -1,9 +1,7 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Stethoscope } from "lucide-react";
-
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -18,34 +16,56 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("home");
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // 🔥 Scroll Spy + Navbar Shadow
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
-      navLinks.forEach((link) => {
-        const section = document.getElementById(link.href);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= 120 && rect.bottom >= 120) {
-            setActive(link.href);
+      if (location.pathname === "/") {
+        navLinks.forEach((link) => {
+          const section = document.getElementById(link.href);
+          if (section) {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 120 && rect.bottom >= 120) {
+              setActive(link.href);
+            }
           }
-        }
-      });
+        });
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [location.pathname]);
 
-  // 🔥 Smooth Scroll
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth",
-    });
+  // 🔥 Smooth Scroll or Navigate
+  const handleNavClick = (id: string) => {
+    if (location.pathname !== "/") {
+      navigate("/#" + id);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
     setOpen(false);
   };
+
+  // 🔥 Handle Hash Scroll on Page Load
+  useEffect(() => {
+    if (location.hash && location.pathname === "/") {
+      const id = location.hash.replace("#", "");
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [location.hash, location.pathname]);
 
   return (
     <nav
@@ -56,24 +76,23 @@ export default function Navbar() {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
-
         {/* LOGO */}
-        <button
-          onClick={() => scrollTo("home")}
+        <Link
+          to="/"
           className="flex items-center gap-2 text-primary font-bold text-xl"
         >
           <Stethoscope className="w-7 h-7" />
           MediBook
-        </button>
+        </Link>
 
         {/* DESKTOP NAV */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((l) => (
             <button
               key={l.href}
-              onClick={() => scrollTo(l.href)}
+              onClick={() => handleNavClick(l.href)}
               className={`text-sm transition ${
-                active === l.href
+                active === l.href && location.pathname === "/"
                   ? "text-primary font-semibold"
                   : "text-muted-foreground hover:text-primary"
               }`}
@@ -88,16 +107,13 @@ export default function Navbar() {
           <Button variant="ghost" size="sm">
             Login
           </Button>
-          <Button size="sm" onClick={() => scrollTo("book")}>
+          <Button size="sm" onClick={() => handleNavClick("book")}>
             Book Appointment
           </Button>
         </div>
 
         {/* MOBILE BUTTON */}
-        <button
-          className="md:hidden"
-          onClick={() => setOpen(!open)}
-        >
+        <button className="md:hidden" onClick={() => setOpen(!open)}>
           {open ? <X /> : <Menu />}
         </button>
       </div>
@@ -114,9 +130,9 @@ export default function Navbar() {
             {navLinks.map((l) => (
               <button
                 key={l.href}
-                onClick={() => scrollTo(l.href)}
+                onClick={() => handleNavClick(l.href)}
                 className={`block w-full text-left text-sm ${
-                  active === l.href
+                  active === l.href && location.pathname === "/"
                     ? "text-primary font-semibold"
                     : "text-muted-foreground"
                 }`}
@@ -127,7 +143,7 @@ export default function Navbar() {
 
             <Button
               className="w-full mt-2"
-              onClick={() => scrollTo("book")}
+              onClick={() => handleNavClick("book")}
             >
               Book Appointment
             </Button>
